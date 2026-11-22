@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>S2 - Listening: Transport and Directions</title>
+  <style>
+    :root {
+      --primary: #1565c0;
+      --primary-dark: #0d47a1;
+      --success: #2e7d32;
+      --error: #c62828;
+      --bg: #f5f7fa;
+      --card: #ffffff;
+      --text: #212121;
+      --muted: #616161;
+      --border: #e0e0e0;
+      --radius: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding: 20px 16px 60px;
+    }
+
+    .container {
+      max-width: 820px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 28px;
+      padding: 24px 20px;
+      background: linear-gradient(135deg, #1565c0, #0d47a1);
+      color: white;
+      border-radius: var(--radius);
+      box-shadow: 0 4px 20px rgba(21, 101, 192, 0.25);
+    }
+
+    header h1 {
+      font-size: 1.6rem;
+      margin-bottom: 6px;
+    }
+
+    header p {
+      opacity: 0.9;
+      font-size: 0.95rem;
+    }
+
+    .instructions {
+      background: #e3f2fd;
+      border-left: 5px solid var(--primary);
+      padding: 14px 18px;
+      border-radius: 0 8px 8px 0;
+      margin-bottom: 24px;
+      font-size: 0.95rem;
+    }
+
+    .score-bar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: white;
+      padding: 12px 18px;
+      border-radius: var(--radius);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      font-weight: 600;
+    }
+
+    .score-bar .progress {
+      background: #e0e0e0;
+      height: 8px;
+      border-radius: 4px;
+      flex: 1;
+      margin: 0 16px;
+      overflow: hidden;
+    }
+
+    .score-bar .progress-fill {
+      height: 100%;
+      background: var(--primary);
+      width: 0%;
+      transition: width 0.4s ease;
+    }
+
+    .audio-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      margin-bottom: 28px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .audio-header {
+      background: #f0f4f8;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .audio-header .num {
+      background: var(--primary);
+      color: white;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
+    .audio-header h2 {
+      font-size: 1.15rem;
+      flex: 1;
+    }
+
+    .audio-player {
+      padding: 16px 18px;
+      background: #fafafa;
+    }
+
+    audio {
+      width: 100%;
+      height: 42px;
+    }
+
+    .questions {
+      padding: 18px;
+    }
+
+    .question {
+      margin-bottom: 22px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .question:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .question-text {
+      font-weight: 600;
+      margin-bottom: 12px;
+      font-size: 1.05rem;
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 14px;
+      background: #f8f9fa;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      user-select: none;
+    }
+
+    .option:hover {
+      border-color: #90caf9;
+      background: #e3f2fd;
+    }
+
+    .option.selected {
+      border-color: var(--primary);
+      background: #e3f2fd;
+    }
+
+    .option.correct {
+      border-color: var(--success);
+      background: #e8f5e9;
+    }
+
+    .option.incorrect {
+      border-color: var(--error);
+      background: #ffebee;
+    }
+
+    .option input {
+      display: none;
+    }
+
+    .option .letter {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: #e0e0e0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+
+    .option.selected .letter {
+      background: var(--primary);
+      color: white;
+    }
+
+    .option.correct .letter {
+      background: var(--success);
+      color: white;
+    }
+
+    .option.incorrect .letter {
+      background: var(--error);
+      color: white;
+    }
+
+    .fill-blanks {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 12px;
+      font-size: 1.05rem;
+    }
+
+    .fill-blanks input {
+      border: 2px solid #e0e0e0;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 1rem;
+      width: 160px;
+      transition: border-color 0.2s;
+    }
+
+    .fill-blanks input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .fill-blanks input.correct {
+      border-color: var(--success);
+      background: #e8f5e9;
+    }
+
+    .fill-blanks input.incorrect {
+      border-color: var(--error);
+      background: #ffebee;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 9px 18px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-check {
+      background: var(--primary);
+      color: white;
+      margin-top: 10px;
+    }
+
+    .btn-check:hover {
+      background: var(--primary-dark);
+    }
+
+    .btn-check:disabled {
+      background: #90a4ae;
+      cursor: not-allowed;
+    }
+
+    .feedback {
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      display: none;
+    }
+
+    .feedback.show {
+      display: block;
+    }
+
+    .feedback.correct {
+      background: #e8f5e9;
+      color: #1b5e20;
+      border: 1px solid #a5d6a7;
+    }
+
+    .feedback.incorrect {
+      background: #ffebee;
+      color: #b71c1c;
+      border: 1px solid #ef9a9a;
+    }
+
+    .map-container {
+      margin: 16px 0;
+      text-align: center;
+      background: #fafafa;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #e0e0e0;
+      overflow-x: auto;
+    }
+
+    .map-container svg {
+      max-width: 100%;
+      height: auto;
+      border-radius: 6px;
+    }
+
+    .map-zones {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 12px;
+      justify-content: center;
+    }
+
+    .zone-btn {
+      padding: 10px 20px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      background: white;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .zone-btn:hover {
+      border-color: #90caf9;
+    }
+
+    .zone-btn.selected {
+      border-color: var(--primary);
+      background: #e3f2fd;
+    }
+
+    .zone-btn.correct {
+      border-color: var(--success);
+      background: #e8f5e9;
+    }
+
+    .zone-btn.incorrect {
+      border-color: var(--error);
+      background: #ffebee;
+    }
+
+    details.transcripts {
+      margin-top: 32px;
+      background: white;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    details.transcripts summary {
+      padding: 14px 18px;
+      font-weight: 600;
+      cursor: pointer;
+      background: #f5f5f5;
+      list-style: none;
+    }
+
+    details.transcripts summary::-webkit-details-marker {
+      display: none;
+    }
+
+    details.transcripts[open] summary {
+      border-bottom: 1px solid var(--border);
+    }
+
+    .transcripts-content {
+      padding: 16px 18px;
+      font-size: 0.95rem;
+    }
+
+    .transcripts-content p {
+      margin-bottom: 10px;
+    }
+
+    .final-score {
+      display: none;
+      text-align: center;
+      padding: 28px 20px;
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      margin-top: 24px;
+    }
+
+    .final-score.show {
+      display: block;
+    }
+
+    .final-score h2 {
+      font-size: 1.5rem;
+      margin-bottom: 8px;
+    }
+
+    .final-score .big-score {
+      font-size: 3rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin: 12px 0;
+    }
+
+    .btn-retry {
+      background: var(--primary);
+      color: white;
+      padding: 12px 28px;
+      font-size: 1rem;
+      margin-top: 12px;
+    }
+
+    .btn-retry:hover {
+      background: var(--primary-dark);
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 600px) {
+      header h1 {
+        font-size: 1.3rem;
+      }
+      .fill-blanks input {
+        width: 130px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Listening: Transport & Directions</h1>
+      <p>Sección 2 · Actividad 3 · Nivel A1-A2</p>
+    </header>
+
+    <div class="instructions">
+      <strong>Listen to each audio.</strong> You can listen as many times as you need. Then answer the questions.<br>
+      <em>Escucha cada audio las veces que necesites y responde las preguntas.</em>
+    </div>
+
+    <div class="score-bar">
+      <span id="score-text">0 / 8</span>
+      <div class="progress">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+      <span id="percent">0%</span>
+    </div>
+
+    <!-- ==================== AUDIO 1 ==================== -->
+    <div class="audio-card" id="audio1">
+      <div class="audio-header">
+        <div class="num">1</div>
+        <h2>Bus</h2>
+      </div>
+      <div class="audio-player">
+        <audio controls src="s2_a1_01_bus.mp3" preload="metadata"></audio>
+      </div>
+      <div class="questions">
+        <!-- 1a -->
+        <div class="question" data-id="1a" data-correct="25">
+          <div class="question-text">1a. Which bus do you take?</div>
+          <div class="options">
+            <label class="option"><input type="radio" name="1a" value="12"><span class="letter">A</span> 12</label>
+            <label class="option"><input type="radio" name="1a" value="25"><span class="letter">B</span> 25</label>
+            <label class="option"><input type="radio" name="1a" value="52"><span class="letter">C</span> 52</label>
+          </div>
+          <button class="btn btn-check" onclick="checkMC(this)">Check</button>
+          <div class="feedback" data-ok="Correct! Bus 25. Across the street = al otro lado de la calle." data-ko="Listen again. Pay attention to the number after bus. Escucha otra vez el número."></div>
+        </div>
+        <!-- 1b -->
+        <div class="question" data-id="1b" data-correct="Across the street">
+          <div class="question-text">1b. Where is the stop?</div>
+          <div class="options">
+            <label class="option"><input type="radio" name="1b" value="Across the street"><span class="letter">A</span> Across the street</label>
+            <label class="option"><input type="radio" name="1b" value="Next to the bank"><span class="letter">B</span> Next to the bank</label>
+            <label class="option"><input type="radio" name="1b" value="Behind the hotel"><span class="letter">C</span> Behind the hotel</label>
+          </div>
+          <button class="btn btn-check" onclick="checkMC(this)">Check</button>
+          <div class="feedback" data-ok="Correct! Bus 25. Across the street = al otro lado de la calle." data-ko="Listen again. Pay attention to the location. Escucha otra vez dónde está la parada."></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== AUDIO 2 ==================== -->
+    <div class="audio-card" id="audio2">
+      <div class="audio-header">
+        <div class="num">2</div>
+        <h2>Metro Announcement</h2>
+      </div>
+      <div class="audio-player">
+        <audio controls src="s2_a1_02_metro.mp3" preload="metadata"></audio>
+      </div>
+      <div class="questions">
+        <div class="question" data-id="2" data-type="fill">
+          <div class="question-text">2. Complete the sentence:</div>
+          <div class="fill-blanks">
+            The next station is
+            <input type="text" id="ans2a" placeholder="station name" autocomplete="off">
+            . You change here for line
+            <input type="text" id="ans2b" placeholder="number" autocomplete="off" style="width:80px">
+            .
+          </div>
+          <button class="btn btn-check" onclick="checkFill2(this)">Check</button>
+          <div class="feedback" data-ok="Great! Central Park. Change here for line 2." data-ko="Listen for the name of the station and the line number."></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== AUDIO 3 ==================== -->
+    <div class="audio-card" id="audio3">
+      <div class="audio-header">
+        <div class="num">3</div>
+        <h2>Ticket Office</h2>
+      </div>
+      <div class="audio-player">
+        <audio controls src="s2_a1_03_ticket.mp3" preload="metadata"></audio>
+      </div>
+      <div class="questions">
+        <div class="question" data-id="3a" data-correct="$3">
+          <div class="question-text">3a. How much is the ticket?</div>
+          <div class="options">
+            <label class="option"><input type="radio" name="3a" value="$2"><span class="letter">A</span> $2</label>
+            <label class="option"><input type="radio" name="3a" value="$3"><span class="letter">B</span> $3</label>
+            <label class="option"><input type="radio" name="3a" value="$5"><span class="letter">C</span> $5</label>
+          </div>
+          <button class="btn btn-check" onclick="checkMC(this)">Check</button>
+          <div class="feedback" data-ok="Correct! Three dollars, platform two." data-ko="Listen again. How much asks about the price. Escucha el precio."></div>
+        </div>
+        <div class="question" data-id="3b" data-correct="Platform 2">
+          <div class="question-text">3b. Which platform?</div>
+          <div class="options">
+            <label class="option"><input type="radio" name="3b" value="Platform 1"><span class="letter">A</span> Platform 1</label>
+            <label class="option"><input type="radio" name="3b" value="Platform 2"><span class="letter">B</span> Platform 2</label>
+            <label class="option"><input type="radio" name="3b" value="Platform 3"><span class="letter">C</span> Platform 3</label>
+          </div>
+          <button class="btn btn-check" onclick="checkMC(this)">Check</button>
+          <div class="feedback" data-ok="Correct! Three dollars, platform two." data-ko="Listen again for the platform number. Escucha el número de la plataforma."></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== AUDIO 4 ==================== -->
+    <div class="audio-card" id="audio4">
+      <div class="audio-header">
+        <div class="num">4</div>
+        <h2>Taxi</h2>
+      </div>
+      <div class="audio-player">
+        <audio controls src="s2_a1_04_taxi.mp3" preload="metadata"></audio>
+      </div>
+      <div class="questions">
+        <div class="question" data-id="4" data-correct="15 min">
+          <div class="question-text">4. How long is the trip?</div>
+          <div class="options">
+            <label class="option"><input type="radio" name="4" value="5 min"><span class="letter">A</span> 5 min</label>
+            <label class="option"><input type="radio" name="4" value="15 min"><span class="letter">B</span> 15 min</label>
+            <label class="option"><input type="radio" name="4" value="50 min"><span class="letter">C</span> 50 min</label>
+          </div>
+          <button class="btn btn-check" onclick="checkMC(this)">Check</button>
+          <div class="feedback" data-ok="Correct! Fifteen minutes." data-ko="Careful! Fifteen (-teen) is not fifty (-ty). Escucha de nuevo."></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== AUDIO 5 ==================== -->
+    <div class="audio-card" id="audio5">
+      <div class="audio-header">
+        <div class="num">5</div>
+        <h2>Directions</h2>
+      </div>
+      <div class="audio-player">
+        <audio controls src="s2_a1_05_directions.mp3" preload="metadata"></audio>
+      </div>
+      <div class="questions">
+        <div class="question" data-id="5a" data-correct="Zone 1">
+          <div class="question-text">5a. Where is the station on the map?</div>
+          <div class="map-container">
+            <!-- Embedded SVG Map -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800" style="max-width:100%;height:auto;">
+              <rect width="1200" height="800" fill="#f5f5f5"/>
+              <rect x="520" y="50" width="160" height="700" fill="#b0b0b0"/>
+              <rect x="50" y="320" width="1100" height="120" fill="#b0b0b0"/>
+              <rect x="50" y="450" width="450" height="300" fill="#e8f5e9" stroke="#81c784" stroke-width="2"/>
+              <rect x="700" y="450" width="450" height="300" fill="#fff3e0" stroke="#ffb74d" stroke-width="2"/>
+              <rect x="50" y="50" width="450" height="250" fill="#e3f2fd" stroke="#64b5f6" stroke-width="2"/>
+              <rect x="700" y="50" width="450" height="250" fill="#fce4ec" stroke="#f06292" stroke-width="2"/>
+              <text x="600" y="40" font-family="Arial, sans-serif" font-size="22" font-weight="bold" text-anchor="middle" fill="#333">Main Street</text>
+              <circle cx="600" cy="720" r="25" fill="#e53935"/>
+              <text x="600" y="726" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="white">YOU</text>
+              <text x="600" y="760" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#c62828">You are here</text>
+              <text x="480" y="600" font-family="Arial, sans-serif" font-size="14" fill="#555" text-anchor="end">Block 1</text>
+              <text x="480" y="280" font-family="Arial, sans-serif" font-size="14" fill="#555" text-anchor="end">Block 2</text>
+              <rect x="280" y="280" width="180" height="80" rx="8" fill="#5c6bc0" stroke="#3949ab" stroke-width="2"/>
+              <text x="370" y="328" font-family="Arial, sans-serif" font-size="20" font-weight="bold" text-anchor="middle" fill="white">BANK</text>
+              <rect x="80" y="200" width="160" height="140" rx="8" fill="#66bb6a" stroke="#43a047" stroke-width="2"/>
+              <text x="160" y="275" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="white">PARK</text>
+              <rect x="80" y="80" width="160" height="100" rx="8" fill="#fff9c4" stroke="#fbc02d" stroke-width="3" stroke-dasharray="8,4"/>
+              <text x="160" y="130" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#f57f17">ZONE 1</text>
+              <text x="160" y="155" font-family="Arial, sans-serif" font-size="13" text-anchor="middle" fill="#f57f17">(Station here)</text>
+              <rect x="740" y="280" width="180" height="80" rx="8" fill="#ef5350" stroke="#c62828" stroke-width="2"/>
+              <text x="830" y="328" font-family="Arial, sans-serif" font-size="20" font-weight="bold" text-anchor="middle" fill="white">HOTEL</text>
+              <rect x="960" y="280" width="160" height="80" rx="8" fill="#ffebee" stroke="#e57373" stroke-width="2" stroke-dasharray="6,3"/>
+              <text x="1040" y="325" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#c62828">ZONE 2</text>
+              <rect x="280" y="520" width="180" height="80" rx="8" fill="#26a69a" stroke="#00897b" stroke-width="2"/>
+              <text x="370" y="568" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="white">SUPERMARKET</text>
+              <rect x="80" y="520" width="160" height="80" rx="8" fill="#e0f2f1" stroke="#4db6ac" stroke-width="2" stroke-dasharray="6,3"/>
+              <text x="160" y="565" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#00695c">ZONE 3</text>
+              <defs>
+                <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                  <polygon points="0 0, 10 3.5, 0 7" fill="#1565c0"/>
+                </marker>
+              </defs>
+              <path d="M 600 680 L 600 400 L 370 400" stroke="#1565c0" stroke-width="4" fill="none" stroke-dasharray="10,5" marker-end="url(#arrowhead)" opacity="0.6"/>
+              <rect x="900" y="600" width="250" height="160" rx="10" fill="white" stroke="#999" stroke-width="1"/>
+              <text x="1025" y="630" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#333">Legend</text>
+              <circle cx="930" cy="660" r="10" fill="#e53935"/>
+              <text x="950" y="665" font-family="Arial, sans-serif" font-size="13" fill="#333">You are here</text>
+              <rect x="920" y="685" width="20" height="14" fill="#fff9c4" stroke="#fbc02d" stroke-width="2"/>
+              <text x="950" y="697" font-family="Arial, sans-serif" font-size="13" fill="#333">Zone 1 (correct)</text>
+              <rect x="920" y="715" width="20" height="14" fill="#ffebee" stroke="#e57373" stroke-width="1"/>
+              <text x="950" y="727" font-family="Arial, sans-serif" font-size="13" fill="#333">Zone 2 / Zone 3</text>
+            </svg>
+          </div>
+          <div class="map-zones">
+            <button class="zone-btn" data-value="Zone 1" onclick="selectZone(this)">Zone 1</button>
+            <button class="zone-btn" data-value="Zone 2" onclick="selectZone(this)">Zone 2</button>
+            <button class="zone-btn" data-value="Zone 3" onclick="selectZone(this)">Zone 3</button>
+          </div>
+          <button class="btn btn-check" onclick="checkZone(this)" style="margin-top:12px">Check</button>
+          <div class="feedback" data-ok="Perfect! Straight two blocks, left at the bank, station next to the park." data-ko="Follow the steps: 1) straight, 2) left at the bank, 3) next to the park."></div>
+        </div>
+
+        <div class="question" data-id="5b" data-correct="2">
+          <div class="question-text">5b. How many blocks do you go straight?</div>
+          <div class="options">
+            <label class="option"><input type="radio" name="5b" value="2"><span class="letter">A</span> 2</label>
+            <label class="option"><input type="radio" name="5b" value="3"><span class="letter">B</span> 3</label>
+            <label class="option"><input type="radio" name="5b" value="4"><span class="letter">C</span> 4</label>
+          </div>
+          <button class="btn btn-check" onclick="checkMC(this)">Check</button>
+          <div class="feedback" data-ok="Perfect! Straight two blocks, left at the bank, station next to the park." data-ko="Listen again for the number of blocks. Escucha cuántas cuadras."></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Final Score -->
+    <div class="final-score" id="final-score">
+      <h2>Activity completed!</h2>
+      <div class="big-score" id="final-number">0/8</div>
+      <p id="final-message"></p>
+      <button class="btn btn-retry" onclick="location.reload()">Try again</button>
+    </div>
+
+    <!-- Transcripts -->
+    <details class="transcripts">
+      <summary>Show transcripts / Ver transcripciones</summary>
+      <div class="transcripts-content">
+        <p><strong>Audio 1:</strong> Excuse me, does this bus go to the airport? No, it doesn't. Take bus twenty-five. The stop is across the street.</p>
+        <p><strong>Audio 2:</strong> Attention, please. The next station is Central Park. Passengers for line two, change here.</p>
+        <p><strong>Audio 3:</strong> One ticket to the city center, please. How much is it? Three dollars. The train leaves from platform two.</p>
+        <p><strong>Audio 4:</strong> To the Grand Museum, please. How long does it take? About fifteen minutes.</p>
+        <p><strong>Audio 5:</strong> Go straight for two blocks. Turn left at the bank. The station is next to the park.</p>
+      </div>
+    </details>
+
+    <footer>
+      Sección 2 · Actividad 3 · Listening de transporte público y direcciones<br>
+      Material formativo · Intentos ilimitados
+    </footer>
+  </div>
+
+  <script>
+    let score = 0;
+    const total = 8;
+    const answered = new Set();
+
+    // Visual selection for radio options
+    document.querySelectorAll('.option').forEach(opt => {
+      opt.addEventListener('click', function() {
+        const name = this.querySelector('input').name;
+        document.querySelectorAll(`input[name="${name}"]`).forEach(r => {
+          r.closest('.option').classList.remove('selected');
+        });
+        this.classList.add('selected');
+        this.querySelector('input').checked = true;
+      });
+    });
+
+    function updateScore() {
+      document.getElementById('score-text').textContent = `${score} / ${total}`;
+      const pct = Math.round((score / total) * 100);
+      document.getElementById('percent').textContent = pct + '%';
+      document.getElementById('progress-fill').style.width = pct + '%';
+
+      if (answered.size === total) {
+        const final = document.getElementById('final-score');
+        final.classList.add('show');
+        document.getElementById('final-number').textContent = `${score}/${total}`;
+        let msg = '';
+        if (score === 8) msg = 'Excellent! Perfect score.';
+        else if (score >= 6) msg = 'Very good! You understood most of the information.';
+        else if (score >= 4) msg = 'Good effort. Listen again to the ones you missed.';
+        else msg = 'Keep practicing. Listen carefully to the numbers and key words.';
+        document.getElementById('final-message').textContent = msg;
+        final.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    function checkMC(btn) {
+      const q = btn.closest('.question');
+      const id = q.dataset.id;
+      if (answered.has(id)) return;
+
+      const selected = q.querySelector('input:checked');
+      const feedback = q.querySelector('.feedback');
+      const correct = q.dataset.correct;
+
+      if (!selected) {
+        alert('Please select an answer first.');
+        return;
+      }
+
+      answered.add(id);
+      btn.disabled = true;
+
+      const options = q.querySelectorAll('.option');
+      options.forEach(o => {
+        o.style.pointerEvents = 'none';
+        const val = o.querySelector('input').value;
+        if (val === correct) o.classList.add('correct');
+        else if (o.querySelector('input').checked) o.classList.add('incorrect');
+      });
+
+      if (selected.value === correct) {
+        score++;
+        feedback.textContent = feedback.dataset.ok;
+        feedback.className = 'feedback show correct';
+      } else {
+        feedback.textContent = feedback.dataset.ko;
+        feedback.className = 'feedback show incorrect';
+      }
+      updateScore();
+    }
+
+    function checkFill2(btn) {
+      const q = btn.closest('.question');
+      const id = q.dataset.id;
+      if (answered.has(id)) return;
+
+      const a = document.getElementById('ans2a').value.trim().toLowerCase();
+      const b = document.getElementById('ans2b').value.trim().toLowerCase();
+      const feedback = q.querySelector('.feedback');
+
+      const okA = a === 'central park';
+      const okB = b === 'two' || b === '2';
+
+      if (!a || !b) {
+        alert('Please fill both blanks.');
+        return;
+      }
+
+      answered.add(id);
+      btn.disabled = true;
+
+      document.getElementById('ans2a').classList.add(okA ? 'correct' : 'incorrect');
+      document.getElementById('ans2b').classList.add(okB ? 'correct' : 'incorrect');
+      document.getElementById('ans2a').disabled = true;
+      document.getElementById('ans2b').disabled = true;
+
+      if (okA && okB) {
+        score++;
+        feedback.textContent = feedback.dataset.ok;
+        feedback.className = 'feedback show correct';
+      } else {
+        feedback.textContent = feedback.dataset.ko;
+        feedback.className = 'feedback show incorrect';
+      }
+      updateScore();
+    }
+
+    let selectedZone = null;
+    function selectZone(btn) {
+      document.querySelectorAll('.zone-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      selectedZone = btn.dataset.value;
+    }
+
+    function checkZone(btn) {
+      const q = btn.closest('.question');
+      const id = q.dataset.id;
+      if (answered.has(id)) return;
+
+      if (!selectedZone) {
+        alert('Please select a zone first.');
+        return;
+      }
+
+      answered.add(id);
+      btn.disabled = true;
+      const feedback = q.querySelector('.feedback');
+      const correct = 'Zone 1';
+
+      document.querySelectorAll('.zone-btn').forEach(b => {
+        b.style.pointerEvents = 'none';
+        if (b.dataset.value === correct) b.classList.add('correct');
+        else if (b.dataset.value === selectedZone) b.classList.add('incorrect');
+      });
+
+      if (selectedZone === correct) {
+        score++;
+        feedback.textContent = feedback.dataset.ok;
+        feedback.className = 'feedback show correct';
+      } else {
+        feedback.textContent = feedback.dataset.ko;
+        feedback.className = 'feedback show incorrect';
+      }
+      updateScore();
+    }
+  </script>
+</body>
+</html>

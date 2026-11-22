@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800">
+  <!-- Background -->
+  <rect width="1200" height="800" fill="#f5f5f5"/>
+  
+  <!-- Streets -->
+  <!-- Main Street (vertical) -->
+  <rect x="520" y="50" width="160" height="700" fill="#b0b0b0"/>
+  <!-- Horizontal street crossing at second block -->
+  <rect x="50" y="320" width="1100" height="120" fill="#b0b0b0"/>
+  
+  <!-- Blocks / buildings areas -->
+  <!-- Left side bottom -->
+  <rect x="50" y="450" width="450" height="300" fill="#e8f5e9" stroke="#81c784" stroke-width="2"/>
+  <!-- Right side bottom -->
+  <rect x="700" y="450" width="450" height="300" fill="#fff3e0" stroke="#ffb74d" stroke-width="2"/>
+  <!-- Left side top -->
+  <rect x="50" y="50" width="450" height="250" fill="#e3f2fd" stroke="#64b5f6" stroke-width="2"/>
+  <!-- Right side top -->
+  <rect x="700" y="50" width="450" height="250" fill="#fce4ec" stroke="#f06292" stroke-width="2"/>
+  
+  <!-- Labels for streets -->
+  <text x="600" y="40" font-family="Arial, sans-serif" font-size="22" font-weight="bold" text-anchor="middle" fill="#333">Main Street</text>
+  <text x="100" y="395" font-family="Arial, sans-serif" font-size="18" fill="#333" transform="rotate(-90 100 395)">Cross Street</text>
+  
+  <!-- You are here -->
+  <circle cx="600" cy="720" r="25" fill="#e53935"/>
+  <text x="600" y="726" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="white">YOU</text>
+  <text x="600" y="760" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#c62828">You are here</text>
+  
+  <!-- Blocks markers -->
+  <text x="480" y="600" font-family="Arial, sans-serif" font-size="14" fill="#555" text-anchor="end">Block 1</text>
+  <text x="480" y="280" font-family="Arial, sans-serif" font-size="14" fill="#555" text-anchor="end">Block 2</text>
+  
+  <!-- Bank at second crossing, left side -->
+  <rect x="280" y="280" width="180" height="80" rx="8" fill="#5c6bc0" stroke="#3949ab" stroke-width="2"/>
+  <text x="370" y="328" font-family="Arial, sans-serif" font-size="20" font-weight="bold" text-anchor="middle" fill="white">BANK</text>
+  
+  <!-- Park to the left of bank -->
+  <rect x="80" y="200" width="160" height="140" rx="8" fill="#66bb6a" stroke="#43a047" stroke-width="2"/>
+  <text x="160" y="275" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="white">PARK</text>
+  
+  <!-- Zone 1 (correct): next to the park -->
+  <rect x="80" y="80" width="160" height="100" rx="8" fill="#fff9c4" stroke="#fbc02d" stroke-width="3" stroke-dasharray="8,4"/>
+  <text x="160" y="130" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#f57f17">ZONE 1</text>
+  <text x="160" y="155" font-family="Arial, sans-serif" font-size="13" text-anchor="middle" fill="#f57f17">(Station here)</text>
+  
+  <!-- Hotel on the right of second crossing -->
+  <rect x="740" y="280" width="180" height="80" rx="8" fill="#ef5350" stroke="#c62828" stroke-width="2"/>
+  <text x="830" y="328" font-family="Arial, sans-serif" font-size="20" font-weight="bold" text-anchor="middle" fill="white">HOTEL</text>
+  
+  <!-- Zone 2 (distractor): next to hotel -->
+  <rect x="960" y="280" width="160" height="80" rx="8" fill="#ffebee" stroke="#e57373" stroke-width="2" stroke-dasharray="6,3"/>
+  <text x="1040" y="325" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#c62828">ZONE 2</text>
+  
+  <!-- Supermarket on left at first crossing area -->
+  <rect x="280" y="520" width="180" height="80" rx="8" fill="#26a69a" stroke="#00897b" stroke-width="2"/>
+  <text x="370" y="568" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="white">SUPERMARKET</text>
+  
+  <!-- Zone 3 (distractor): near supermarket -->
+  <rect x="80" y="520" width="160" height="80" rx="8" fill="#e0f2f1" stroke="#4db6ac" stroke-width="2" stroke-dasharray="6,3"/>
+  <text x="160" y="565" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#00695c">ZONE 3</text>
+  
+  <!-- Direction arrow example -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#1565c0"/>
+    </marker>
+  </defs>
+  <!-- Path suggestion: straight up Main Street two blocks then left -->
+  <path d="M 600 680 L 600 400 L 370 400" stroke="#1565c0" stroke-width="4" fill="none" stroke-dasharray="10,5" marker-end="url(#arrowhead)" opacity="0.6"/>
+  
+  <!-- Legend -->
+  <rect x="900" y="600" width="250" height="160" rx="10" fill="white" stroke="#999" stroke-width="1"/>
+  <text x="1025" y="630" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#333">Legend</text>
+  <circle cx="930" cy="660" r="10" fill="#e53935"/>
+  <text x="950" y="665" font-family="Arial, sans-serif" font-size="14" fill="#333">You are here</text>
+  <rect x="920" y="685" width="20" height="15" fill="#fff9c4" stroke="#fbc02d" stroke-width="2"/>
+  <text x="950" y="697" font-family="Arial, sans-serif" font-size="14" fill="#333">Correct zone (1)</text>
+  <rect x="920" y="715" width="20" height="15" fill="#ffebee" stroke="#e57373" stroke-width="1"/>
+  <text x="950" y="727" font-family="Arial, sans-serif" font-size="14" fill="#333">Distractors (2,3)</text>
+  
+  <!-- Title -->
+  <text x="600" y="30" font-family="Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="#1a237e">City Map - Find the Station</text>
+</svg>
